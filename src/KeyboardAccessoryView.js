@@ -23,12 +23,14 @@ export default class KeyboardAccessoryView extends Component {
     revealKeyboardInteractive: PropTypes.bool,
     manageScrollView: PropTypes.bool,
     requiresSameParentToManageScrollView: PropTypes.bool,
+    addBottomView: PropTypes.bool,
   };
   static defaultProps = {
     iOSScrollBehavior: -1,
     revealKeyboardInteractive: false,
     manageScrollView: true,
     requiresSameParentToManageScrollView: false,
+    addBottomView: false
   };
 
   constructor(props) {
@@ -109,15 +111,30 @@ export default class KeyboardAccessoryView extends Component {
     return this.props.kbInitialProps;
   }
 
+  async getNativeProps() {
+    if (this.trackingViewRef) {
+      return await this.trackingViewRef.getNativeProps();
+    }
+    return {};
+  }
+
+  scrollToStart() {
+    if (this.trackingViewRef) {
+      this.trackingViewRef.scrollToStart();
+    }
+  }
+
   render() {
     return (
       <KeyboardTrackingView
+        ref={r => this.trackingViewRef = r}
         style={styles.trackingToolbarContainer}
         onLayout={this.onContainerComponentHeightChanged}
         scrollBehavior={this.getIOSTrackingScrollBehavior()}
         revealKeyboardInteractive={this.props.revealKeyboardInteractive}
         manageScrollView={this.props.manageScrollView}
         requiresSameParentToManageScrollView={this.props.requiresSameParentToManageScrollView}
+        addBottomView={this.props.addBottomView}
       >
         {this.props.renderContent && this.props.renderContent()}
         <CustomKeyboardView
